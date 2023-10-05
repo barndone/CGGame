@@ -4,6 +4,7 @@
 #include "CGGamePlayer.h"
 #include "Components/StaticMeshComponent.h"
 #include "CGGamePickup.h"
+#include "CGGameJumpPad.h"
 
 // Sets default values
 ACGGamePlayer::ACGGamePlayer()
@@ -23,16 +24,17 @@ void ACGGamePlayer::BeginPlay()
 {
 	//	super refers to base time (NOT a c++ keyword)
 	Super::BeginPlay();
-
-	OnActorBeginOverlap.AddDynamic(this, &ACGGamePlayer::HandleOverlap);
-
-	
 }
 
 // Called every frame
 void ACGGamePlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//	checking grounded state:
+	bool wasGrounded = IsGrounded;
+
+	//FHitRaycast
 }
 
 // Called to bind functionality to input
@@ -42,8 +44,28 @@ void ACGGamePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ACGGamePlayer::Handle_MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACGGamePlayer::Handle_MoveRight);
-
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACGGamePlayer::Handle_Jump);
+}
+
+void ACGGamePlayer::AddScore(int _scoreToAdd)
+{
+	Score += _scoreToAdd;
+}
+
+int ACGGamePlayer::GetScore() const
+{
+	return Score;
+}
+
+void ACGGamePlayer::ApplyImpulse(FVector _force, bool _resetYVelocity)
+{
+	if (_resetYVelocity)
+	{
+		FVector currentVel = PlayerMesh->GetPhysicsLinearVelocity();
+		PlayerMesh->SetPhysicsLinearVelocity(FVector(currentVel.X, currentVel.Y, 0.0f));
+	}
+
+	PlayerMesh->AddImpulse(_force);
 }
 
 void ACGGamePlayer::Handle_MoveForward(float _axisValue)
@@ -59,23 +81,6 @@ void ACGGamePlayer::Handle_MoveRight(float _axisValue)
 
 void ACGGamePlayer::Handle_Jump()
 {
-	PlayerMesh->AddImpulse(FVector(0, 0, JumpForce));
-}
-
-void ACGGamePlayer::HandleOverlap(AActor* _OverlappedActor, AActor* _OtherActor)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Purple, TEXT("Overlap Occured"));
-
-	//	cast to player
-	ACGGamePlayer* overlappedActor = Cast<ACGGamePlayer>(_OverlappedActor);
-
-	ACGGamePickup* overlappedPickup = Cast<ACGGamePickup>(_OtherActor);
-
-	if (overlappedPickup != nullptr)
-	{
-		overlappedActor->Score += overlappedPickup->ScoreValue;
-	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Score is now: " + FString::FromInt(overlappedActor->Score)));
+	ApplyImpulse(FVector(0, 0, JumpForce), false);
 }
 

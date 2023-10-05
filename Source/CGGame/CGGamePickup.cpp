@@ -2,6 +2,7 @@
 
 
 #include "CGGamePickup.h"
+#include "CGGamePlayer.h"
 
 // Sets default values
 ACGGamePickup::ACGGamePickup()
@@ -18,7 +19,8 @@ ACGGamePickup::ACGGamePickup()
 void ACGGamePickup::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	OnActorBeginOverlap.AddDynamic(this, &ACGGamePickup::HandleOverlap);
+
 }
 
 // Called every frame
@@ -26,5 +28,21 @@ void ACGGamePickup::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ACGGamePickup::HandleOverlap(AActor* _OverlappedActor, AActor* _OtherActor)
+{
+	ACGGamePlayer* player = Cast<ACGGamePlayer>(_OtherActor);
+	if (player == nullptr)
+	{
+		return;
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Score was: " + FString::FromInt(player->GetScore())));
+		player->AddScore(ScoreValue);
+		GEngine->AddOnScreenDebugMessage(0, 1.0f, FColor::Green, TEXT("Score is now: " + FString::FromInt(player->GetScore())));
+		Destroy();
+	}
 }
 

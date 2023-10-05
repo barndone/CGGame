@@ -6,9 +6,6 @@
 #include "GameFramework/GameModeBase.h"
 #include "CGGameGameModeBase.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class CGGAME_API ACGGameGameModeBase : public AGameModeBase
 {

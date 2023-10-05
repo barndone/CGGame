@@ -30,6 +30,14 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable)
+	void AddScore(int _scoreToAdd);
+	UFUNCTION(BlueprintCallable)
+	int GetScore() const;
+
+	UFUNCTION(BlueprintCallable)
+	void ApplyImpulse(FVector _force, bool _resetYVelocity);
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Player")
 	class UStaticMeshComponent* PlayerMesh;
@@ -40,15 +48,16 @@ private:
 	void Handle_MoveRight(float _axisValue);
 	UFUNCTION()
 	void Handle_Jump();
-	UFUNCTION()
-	void HandleOverlap(AActor* _OverlappedActor, AActor* _OtherActor);
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player", meta = (AllowPrivateAccess=true))
-		float PushForce = 10000.0f;
+	float PushForce = 10000.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player", meta = (AllowPrivateAccess = true))
-		float JumpForce = 10000.0f;
+	float JumpForce = 10000.0f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Player", meta = (AllowPrivateAccess = true))
-		int Score = 0;
+	int Score = 0;
+
+	UPROPERTY(VisibleAnywhere, Category = "Player", meta = (AllowPrivateAccess = true))
+	bool IsGrounded = 0;
 };

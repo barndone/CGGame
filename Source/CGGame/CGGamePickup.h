@@ -16,7 +16,7 @@ public:
 	ACGGamePickup();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
-		int ScoreValue;
+		int ScoreValue = 1;
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,4 +29,7 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Pickup")
 	class UStaticMeshComponent* PickupMesh;
+
+	UFUNCTION()
+	void HandleOverlap(AActor* _OverlappedActor, AActor* _OtherActor);
 };
