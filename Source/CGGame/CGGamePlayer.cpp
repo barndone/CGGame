@@ -50,6 +50,7 @@ void ACGGamePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 void ACGGamePlayer::AddScore(int _scoreToAdd)
 {
 	Score += _scoreToAdd;
+	OnScoreChanged.Broadcast(Score);
 }
 
 int ACGGamePlayer::GetScore() const

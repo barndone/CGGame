@@ -21,4 +21,7 @@ protected:
 private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true, BindWidget))
 	class UTextBlock* ScoreText;
+
+	UFUNCTION()
+	void HandleOnScoreChanged(int _value);
 };

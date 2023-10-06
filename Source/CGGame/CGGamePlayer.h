@@ -6,6 +6,8 @@
 #include "GameFramework/Pawn.h"
 #include "CGGamePlayer.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnScoreChanged, int, scoreValue);
+
 UCLASS()
 class CGGAME_API ACGGamePlayer : public APawn
 {
@@ -34,9 +36,10 @@ public:
 	void AddScore(int _scoreToAdd);
 	UFUNCTION(BlueprintCallable)
 	int GetScore() const;
-
 	UFUNCTION(BlueprintCallable)
 	void ApplyImpulse(FVector _force, bool _resetYVelocity);
+	UPROPERTY(BlueprintAssignable)
+	FOnScoreChanged OnScoreChanged;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Player")

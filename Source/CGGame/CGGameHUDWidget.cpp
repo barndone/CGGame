@@ -8,15 +8,21 @@
 void UCGGameHUDWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+	ACGGamePlayer* player = Cast<ACGGamePlayer>(GetOwningPlayerPawn());
 
+	if (player != nullptr)
+	{
+		player->OnScoreChanged.AddDynamic(this, &UCGGameHUDWidget::HandleOnScoreChanged);
+	}
 
 }
 
 void UCGGameHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+}
 
-	ACGGamePlayer* player = Cast<ACGGamePlayer>(GetOwningPlayerPawn());
-	int score = player->GetScore();
-	ScoreText->SetText(FText::FromString(FString::FromInt(score)));
+void UCGGameHUDWidget::HandleOnScoreChanged(int _value)
+{
+	ScoreText->SetText(FText::FromString(FString::FromInt(_value)));
 }
