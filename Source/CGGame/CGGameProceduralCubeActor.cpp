@@ -198,7 +198,7 @@ void ACGGameProceduralCubeActor::GenerateCube()
 	float halfZ = CubeHeight / 2;
 
 	//	Face in positive X direction
-	//	Build triangles ClockWise
+	//	Build triangles ClockWise so the rear faces are not visible 
 	Positions.Add(FVector(halfX,	halfY,		halfZ));
 	Positions.Add(FVector(halfX,	-halfY,		halfZ));
 	Positions.Add(FVector(halfX,	halfY,		-halfZ));
@@ -241,7 +241,7 @@ void ACGGameProceduralCubeActor::GenerateCube()
 	TriangleIndices.Add(6);
 
 	//	Face in positive Y direction
-	//	Build triangles ClockWise
+	//	Build triangles ClockWise so the rear faces are not visible 
 	Positions.Add(FVector(halfX,	halfY,		halfZ));
 	Positions.Add(FVector(halfX,	halfY,		-halfZ));
 	Positions.Add(FVector(-halfX,	halfY,		halfZ));
@@ -304,7 +304,7 @@ void ACGGameProceduralCubeActor::GenerateCube()
 	TriangleIndices.Add(18);
 
 	//	Face in negative Z direction
-	//	Build triangles ClockWise
+	//	Build triangles ClockWise so the rear faces are not visible 
 	Positions.Add(FVector(halfX,	halfY,		-halfZ));
 	Positions.Add(FVector(halfX,	-halfY,		-halfZ));
 	Positions.Add(FVector(-halfX,	halfY,		-halfZ));
