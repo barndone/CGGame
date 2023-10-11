@@ -20,54 +20,6 @@ void ACGGameProceduralCubeActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	//	QUAD Generation
-	//	Positions.Add(FVector(0, 50, 50));			//	1st vert
-	//	Positions.Add(FVector(0, -50, -50));		//	2nd vert
-	//	Positions.Add(FVector(0, -50, 50));			//	3rd vert
-	//	Positions.Add(FVector(0, 50, -50));
-	//	UVs.Add(FVector2D(1, 0));
-	//	UVs.Add(FVector2D(0, 1));
-	//	UVs.Add(FVector2D(0, 0));
-	//	UVs.Add(FVector2D(1, 1));
-	//	verts need to be arranged in a counter clockwise fashion for them to be rendered correctly
-	//	TriangleIndices.Add(0);
-	//	TriangleIndices.Add(1);
-	//	TriangleIndices.Add(2);
-	//	TriangleIndices.Add(0);
-	//	TriangleIndices.Add(3);
-	//	TriangleIndices.Add(1);
-
-	//	//	PENTAGON Generation
-	//	Positions.Add(FVector(0, 0, 0));
-	//	Positions.Add(FVector(0, 0, 50));
-	//	Positions.Add(FVector(0, 50, 0));
-	//	Positions.Add(FVector(0, 30, -50));
-	//	Positions.Add(FVector(0, -30, -50));
-	//	Positions.Add(FVector(0, -50, 0));
-	//	
-	//	//	CounterClockWise Per Tri:
-	//	//	Tri 1:
-	//	TriangleIndices.Add(0);
-	//	TriangleIndices.Add(2);
-	//	TriangleIndices.Add(1);
-	//	//	Tri 2:
-	//	TriangleIndices.Add(0);
-	//	TriangleIndices.Add(3);
-	//	TriangleIndices.Add(2);
-	//	//	Tri 3:
-	//	TriangleIndices.Add(0);
-	//	TriangleIndices.Add(4);
-	//	TriangleIndices.Add(3);
-	//	//	Tri 4:
-	//	TriangleIndices.Add(0);
-	//	TriangleIndices.Add(5);
-	//	TriangleIndices.Add(4);
-	//	//	Tri 5:
-	//	TriangleIndices.Add(0);
-	//	TriangleIndices.Add(1);
-	//	TriangleIndices.Add(5);
-
-
 	switch (type)
 	{
 		case MeshType::QUAD:
@@ -79,13 +31,16 @@ void ACGGameProceduralCubeActor::BeginPlay()
 		case MeshType::CUBE:
 			GenerateCube();
 			break;
+		case MeshType::SPHERE:
+			GenerateSphere();
+			break;
 	}
 
 	ProceduralMesh->CreateMeshSection(
 		0, 
 		Positions, 
 		TriangleIndices, 
-		Normals, 
+		/*Normals*/TArray<FVector>(),
 		UVs, 
 		TArray<FColor>(), 
 		TArray<FProcMeshTangent>(), 
@@ -204,10 +159,10 @@ void ACGGameProceduralCubeActor::GenerateCube()
 	Positions.Add(FVector(halfX,	halfY,		-halfZ));
 	Positions.Add(FVector(halfX,	-halfY,		-halfZ));
 
-	Normals.Add(xNormal);
-	Normals.Add(xNormal);
-	Normals.Add(xNormal);
-	Normals.Add(xNormal);
+	Normals.Add(-xNormal);
+	Normals.Add(-xNormal);
+	Normals.Add(-xNormal);
+	Normals.Add(-xNormal);
 
 
 	//	tri 1:
@@ -326,4 +281,67 @@ void ACGGameProceduralCubeActor::GenerateCube()
 
 }
 
+void ACGGameProceduralCubeActor::GenerateSphere()
+{
+	//	calculate angle steps for horizontal and vertical slices
+	float angleStepHorizontalDegrees = 360.0f / HorizontalSlices;
+	float angleStepVerticalDegrees = 360.0f / VerticalSlices;
+
+	//	convert to radians
+	float horizontalAngleStepRad = FMath::DegreesToRadians(angleStepHorizontalDegrees);
+	float verticalAngleStepRad = FMath::DegreesToRadians(angleStepVerticalDegrees);
+
+	//	place the verts
+	//	Vertically
+	for (int i = 0; i < VerticalSlices / 2 + 1; i++)
+	{
+		//	horizontally
+		for (int j = 0; j < HorizontalSlices / 2 + 1; j++)
+		{
+			//	 add the x, y, and z positions
+			Positions.Add(
+			FVector(
+				SphereRadius * cos(j * horizontalAngleStepRad) * sin(i * verticalAngleStepRad),
+				SphereRadius * sin(j * horizontalAngleStepRad) * sin(i * verticalAngleStepRad),
+				SphereRadius * cos(i * verticalAngleStepRad)
+			));
+		}
+	}
+
+
+	//	generate tris
+	//		TODO: helper method to generate tris given a bool for clockwise or counterclockwise
+	GenerateTris();
+
+}
+
+void ACGGameProceduralCubeActor::GenerateTris()
+{
+	//
+	/*
+	  temp2 -- temp4
+		|  \	|
+		|   \   |
+		|    \	|
+	  temp3 -- temp
+
+	*/
+
+	for(int i = 0; i < Positions.Num(); i++)
+	{
+		int temp = i;
+		int temp2 = temp + (HorizontalSlices / 2);
+		int temp3 = temp + (HorizontalSlices / 2 + 1);
+		auto temp4 = temp * HorizontalSlices * 2;
+		
+		TriangleIndices.Add(temp);
+		TriangleIndices.Add(temp3);
+		TriangleIndices.Add(temp2);
+
+		TriangleIndices.Add(temp);
+		TriangleIndices.Add(temp4);
+		TriangleIndices.Add(temp2);
+
+	}
+}
 

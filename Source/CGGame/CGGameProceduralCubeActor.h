@@ -11,7 +11,8 @@ enum class MeshType : uint8
 {
 	QUAD = 0,
 	NGON = 1,
-	CUBE = 2
+	CUBE = 2,
+	SPHERE = 3
 };
 
 UCLASS()
@@ -59,6 +60,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cube Options")
 		float CubeDepth = 50;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sphere Options")
+		float SphereRadius = 50.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sphere Options")
+		int HorizontalSlices = 10;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sphere Options")
+		int VerticalSlices = 10;
+
 
 private:
 	//	vert positions
@@ -80,4 +88,9 @@ private:
 	void GenerateNGon();
 	UFUNCTION()
 	void GenerateCube();
+	UFUNCTION()
+	void GenerateSphere();
+
+	UFUNCTION()
+	void GenerateTris();
 };
