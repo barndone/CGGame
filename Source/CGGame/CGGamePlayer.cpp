@@ -85,3 +85,11 @@ void ACGGamePlayer::Handle_Jump()
 	ApplyImpulse(FVector(0, 0, JumpForce), false);
 }
 
+FVector ACGGamePlayer::GetGroundVelocity()
+{
+	FVector curVelocity = GetVelocity();
+	curVelocity.Z = 0.0f;
+
+	return curVelocity;
+}
+

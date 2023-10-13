@@ -38,6 +38,8 @@ public:
 	int GetScore() const;
 	UFUNCTION(BlueprintCallable)
 	void ApplyImpulse(FVector _force, bool _resetYVelocity);
+	UFUNCTION(BlueprintCallable)
+	FVector GetGroundVelocity();
 	UPROPERTY(BlueprintAssignable)
 	FOnScoreChanged OnScoreChanged;
 
